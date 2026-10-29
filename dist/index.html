@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="澄明企業社正式報價單製作與 PDF 列印系統">
+  <meta name="theme-color" content="#17324d">
+  <title>澄明企業社｜報價系統</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="editor-pane" aria-label="報價資料編輯區">
+      <header class="app-header">
+        <div class="brand-mark" aria-hidden="true"><span>澄</span></div>
+        <div>
+          <p class="eyebrow">CHENG MING ENTERPRISE</p>
+          <h1>正式報價系統</h1>
+        </div>
+      </header>
+
+      <div class="toolbar" role="toolbar" aria-label="報價單操作">
+        <button class="btn btn-secondary" id="newQuoteBtn" type="button">
+          <span aria-hidden="true">＋</span> 新增報價
+        </button>
+        <button class="btn btn-secondary" id="saveQuoteBtn" type="button">
+          <span aria-hidden="true">✓</span> 儲存草稿
+        </button>
+        <button class="btn btn-primary" id="printQuoteBtn" type="button">
+          <span aria-hidden="true">▣</span> 列印／儲存 PDF
+        </button>
+      </div>
+
+      <div class="save-status" id="saveStatus" role="status" aria-live="polite">所有資料僅儲存在這台裝置</div>
+
+      <main class="form-stack">
+        <section class="form-card">
+          <div class="section-heading">
+            <span class="section-number">01</span>
+            <div>
+              <h2>報價資訊</h2>
+              <p>設定報價單編號與有效期限</p>
+            </div>
+          </div>
+          <div class="field-grid field-grid-2">
+            <label class="field">
+              <span>報價單編號</span>
+              <input type="text" data-field="quoteNo" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>報價日期</span>
+              <input type="date" data-field="quoteDate">
+            </label>
+            <label class="field">
+              <span>有效天數</span>
+              <div class="input-suffix">
+                <input type="number" min="1" max="365" data-field="validDays">
+                <span>天</span>
+              </div>
+            </label>
+            <label class="field">
+              <span>報價人</span>
+              <input type="text" data-field="salesperson" autocomplete="name">
+            </label>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading">
+            <span class="section-number">02</span>
+            <div>
+              <h2>客戶資料</h2>
+              <p>填入報價對象與聯絡方式</p>
+            </div>
+          </div>
+          <div class="field-grid field-grid-2">
+            <label class="field field-span-2">
+              <span>客戶／公司名稱 <em>必填</em></span>
+              <input type="text" data-field="customerName" placeholder="例如：美商迪艾司科技有限公司台灣分公司" autocomplete="organization" required>
+            </label>
+            <label class="field">
+              <span>統一編號</span>
+              <input type="text" inputmode="numeric" maxlength="8" data-field="customerTaxId" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>聯絡人</span>
+              <input type="text" data-field="contactName" autocomplete="name">
+            </label>
+            <label class="field">
+              <span>聯絡電話</span>
+              <input type="tel" data-field="contactPhone" autocomplete="tel">
+            </label>
+            <label class="field">
+              <span>電子郵件</span>
+              <input type="email" data-field="contactEmail" autocomplete="email">
+            </label>
+            <label class="field field-span-2">
+              <span>客戶地址</span>
+              <input type="text" data-field="customerAddress" autocomplete="street-address">
+            </label>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading section-heading-action">
+            <div class="section-heading-main">
+              <span class="section-number">03</span>
+              <div>
+                <h2>報價品項</h2>
+                <p>可自由增加、排序與刪除項目</p>
+              </div>
+            </div>
+            <button class="text-btn" id="addItemBtn" type="button">＋ 新增品項</button>
+          </div>
+          <div class="items-editor" id="itemsEditor"></div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading">
+            <span class="section-number">04</span>
+            <div>
+              <h2>付款與備註</h2>
+              <p>將顯示於正式報價單下方</p>
+            </div>
+          </div>
+          <div class="field-grid field-grid-2">
+            <label class="field">
+              <span>稅別</span>
+              <select data-field="taxMode">
+                <option value="external">外加營業稅 5%</option>
+                <option value="included">含營業稅 5%</option>
+                <option value="exempt">免稅</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>付款條件</span>
+              <input type="text" data-field="paymentTerms" placeholder="例如：驗收後 30 日內付款">
+            </label>
+            <label class="field field-span-2">
+              <span>報價說明</span>
+              <textarea rows="4" data-field="notes" placeholder="每行一項說明，列印時會自動編號"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <details class="form-card archive-card">
+          <summary>
+            <span>歷史報價與資料備份</span>
+            <span class="summary-hint">本機保存</span>
+          </summary>
+          <div class="archive-content">
+            <div class="archive-actions">
+              <button class="btn btn-secondary btn-small" id="exportBtn" type="button">匯出全部資料</button>
+              <label class="btn btn-secondary btn-small file-btn">
+                匯入備份
+                <input id="importInput" type="file" accept="application/json,.json">
+              </label>
+            </div>
+            <div class="history-list" id="historyList"></div>
+          </div>
+        </details>
+      </main>
+
+      <footer class="editor-footer">
+        <strong>澄明企業社</strong>
+        <span>統一編號 37559098</span>
+      </footer>
+    </aside>
+
+    <section class="preview-pane" aria-label="報價單即時預覽">
+      <div class="preview-topbar">
+        <div>
+          <span class="preview-dot"></span>
+          A4 即時預覽
+        </div>
+        <span>列印時僅輸出右側報價單</span>
+      </div>
+
+      <div class="document-frame">
+        <article class="quotation" id="quotationPreview">
+          <header class="quote-header">
+            <div class="company-identity">
+              <div class="quote-logo" aria-hidden="true">
+                <span class="quote-logo-main">澄明</span>
+                <span class="quote-logo-sub">CHENG MING</span>
+              </div>
+              <div class="company-meta">
+                <strong>澄明企業社</strong>
+                <span>CHENG MING ENTERPRISE CO.</span>
+                <span>臺南市東區復興里裕學路71號2樓</span>
+                <span>統一編號：37559098　電話：06-2719216</span>
+              </div>
+            </div>
+            <div class="quote-title">
+              <p>QUOTATION</p>
+              <h2>報價單</h2>
+            </div>
+          </header>
+
+          <div class="header-rule"><span></span></div>
+
+          <section class="quote-overview">
+            <div class="customer-block">
+              <p class="block-label">報價對象 BILL TO</p>
+              <h3 id="previewCustomer">請填寫客戶名稱</h3>
+              <dl>
+                <div><dt>統一編號</dt><dd id="previewCustomerTaxId">—</dd></div>
+                <div><dt>聯絡人</dt><dd id="previewContact">—</dd></div>
+                <div><dt>電話</dt><dd id="previewPhone">—</dd></div>
+                <div class="wide"><dt>地址</dt><dd id="previewAddress">—</dd></div>
+              </dl>
+            </div>
+            <dl class="quote-meta">
+              <div><dt>報價單號</dt><dd id="previewQuoteNo"></dd></div>
+              <div><dt>報價日期</dt><dd id="previewQuoteDate"></dd></div>
+              <div><dt>有效期限</dt><dd id="previewExpiry"></dd></div>
+              <div><dt>報價人員</dt><dd id="previewSalesperson"></dd></div>
+            </dl>
+          </section>
+
+          <section class="quote-lines">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-no">項次</th>
+                  <th>品名／規格說明</th>
+                  <th class="col-unit">單位</th>
+                  <th class="col-qty">數量</th>
+                  <th class="col-price">單價</th>
+                  <th class="col-amount">金額</th>
+                </tr>
+              </thead>
+              <tbody id="previewItems"></tbody>
+            </table>
+          </section>
+
+          <section class="quote-summary">
+            <div class="summary-words">
+              <span>合計新臺幣</span>
+              <strong id="previewAmountWords">零元整</strong>
+            </div>
+            <dl class="totals">
+              <div><dt>未稅小計</dt><dd id="previewSubtotal">NT$0</dd></div>
+              <div id="taxRow"><dt>營業稅 5%</dt><dd id="previewTax">NT$0</dd></div>
+              <div class="grand-total"><dt>含稅總計</dt><dd id="previewTotal">NT$0</dd></div>
+            </dl>
+          </section>
+
+          <section class="quote-notes">
+            <div>
+              <p class="block-label">報價說明 REMARKS</p>
+              <ol id="previewNotes"></ol>
+            </div>
+            <div class="payment-box">
+              <span>付款條件</span>
+              <strong id="previewPaymentTerms"></strong>
+            </div>
+          </section>
+
+          <section class="signatures">
+            <div>
+              <span>報價單位簽章</span>
+              <div class="signature-space">
+                <span>澄明企業社</span>
+              </div>
+            </div>
+            <div>
+              <span>客戶確認簽章</span>
+              <div class="signature-space"></div>
+            </div>
+          </section>
+
+          <footer class="quote-footer">
+            <span>感謝您的詢價，期待與您合作</span>
+            <span id="previewFooterNo"></span>
+          </footer>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
