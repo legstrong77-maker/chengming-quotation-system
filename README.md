@@ -2,6 +2,12 @@
 
 瀏覽器即可使用的正式報價單製作工具。資料預設只保存在使用者瀏覽器的 `localStorage`，不會傳送到外部服務。
 
+## 直接使用
+
+開啟：https://legstrong77-maker.github.io/chengming-quotation-system/
+
+網站由 GitHub Pages 公開提供，不需要登入。建議加入瀏覽器書籤，之後可直接開啟使用。
+
 ## 功能
 
 - 自動產生每日流水報價編號
